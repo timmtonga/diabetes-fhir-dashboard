@@ -1,0 +1,12 @@
+{
+  "name": "diabetes-fhir-dashboard",
+  "description": "Diabetes Glycemic Control Dashboard",
+  "version": "0.0.1",
+  "scripts": {
+    "start": "./node_modules/http-server/bin/http-server src -p 8005 -c-1"
+  },
+  "dependencies": {
+    "http-server": "^0.10.0"
+  },
+  "repository": "https://github.com/timmtonga/diabetes-fhir-dashboard"
+}
