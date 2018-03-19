@@ -117,9 +117,21 @@ function displayPatients()
     for(i = 0; i < state.patients.length; i++)
     {
         num_names = (state.patients[i].resource.name.length - 1)
-        row = state.patients[i].resource.name[num_names].family
-        $("#patientsTable > tbody").append("<tr><td>"+row+"</td><td>row content</td><td>row content</td><td>row content</td></tr>");
+        name = state.patients[i].resource.name[num_names].given.join(" ") + " " + state.patients[i].resource.name[num_names].family
+        gender = state.patients[i].resource.gender
+        age = (filter.age(state.patients[i].resource.birthDate))
+        $("#patientsTable > tbody").append("<tr><td>"+name+"</td><td>"+age+"</td><td>"+gender+"</td>" +
+            "<td style='text-align: center'><button class= 'btn btn-primary' onmousedown='showPatient("+ state.patients[i].resource.id +")'>View</button></td></tr>");
     }
+}
+
+function showPatient(id)
+{
+    console.log("Querying patient")
+    smart_local.patient.id = id
+    queryPatient(smart_local).done(() => {
+        displayPatient()
+    })
 }
 
 FHIR.oauth2.ready((smart) => {
