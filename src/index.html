@@ -9,7 +9,7 @@
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="libs/bootstrap/js/bootstrap.min.js"></script>
     <script src="libs/jquery-2.1.4/jquery.min.js"></script>
-    <script src="libs/application.js"></script>
+    <script src="libs/xdate.js"></script>
     <script src="libs/fhir-client/fhir-client.js"></script>
 </head>
 <body>
@@ -25,20 +25,28 @@
 							</span>
                     </div>
                 </div>
+
+
+                <div id="patientBanner" class="navbar navbar-inverse navbar-static-top" role="navigation">
+                <p class="navbar-brand"><span class="glyphicon glyphicon-user"></span><span id="patientName"></span></p>
+                <p class="navbar-text">sex <span id="patientSex" class="title"></span></p>
+                <p class="navbar-text">dob <span id="patientDOB" class="title"></span></p>
+                <p class="navbar-text">age <span id="patientAge" class="title"></span></p>
+                </div>
+
                 <div class="panel-body">
                     <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Patients" />
                 </div>
+
+
                 <table class="table table-hover" id="dev-table">
                     <thead>
                     <tr>
                         <th>Patient Name</th>
                         <th>Age</th>
                         <th>Sex</th>
-                        <th>Blood Glucose < 70 in past 36 hours</th>
                         <th># Blood Glucose < 70 since admit </th>
-                        <th>Blood Glucose 180-250 in last 36 hours </th>
                         <th># Blood Glucose 180-250 since admit</th>
-                        <th>Blood Glucose > 250 in last 36 hours </th>
                         <th># Blood Glucose > 250 since admit</th>
                         <th>A1C (value) in last 3 months</th>
                         <th>Basal insulin ordered</th>
@@ -49,6 +57,9 @@
 
                     </tbody>
                 </table>
+
+
+                <script src="app.js"></script>
             </div>
         </div>
 </div>
