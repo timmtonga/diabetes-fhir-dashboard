@@ -19,6 +19,15 @@
 .table>thead>tr>th{
     border: 1px solid silver;
 }
+.table>tbody>tr>td,th {
+    border: 1px solid #dddddd;
+    text-align: left;
+    padding: 8px;
+}
+
+.table>tbody>tr:nth-child(4n+3) {
+    background-color: #dddddd;
+}
 .modal {
     display: none; /* Hidden by default */
     position: fixed; /* Stay in place */
