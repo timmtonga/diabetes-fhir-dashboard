@@ -181,15 +181,15 @@ function parse_glucose(curr_state, curr_val){
 
 function display (curr_state) {
     new_row = '' +
-    '<tr><th>'+curr_state.patient.name+'</th>'+
+    "<tr><th style='text-transform: capitalize'>"+curr_state.patient.name.toLowerCase()+'</th>'+
         '<th>'+curr_state.patient.age+'</th>'+
-        '<th>'+curr_state.patient.gender+'</th>'+
+        "<th style='text-transform: capitalize'>"+curr_state.patient.gender+'</th>'+
         '<th>'+curr_state.counts[0]+'</th>'+
         '<th>'+curr_state.counts[1]+'</th>'+
         '<th>'+curr_state.counts[2]+'</th>'+
         '<th>n/a</th>'+
         '<th>n/a</th>'+
-        '<th>none</th>'+
+        "<th><button class= 'btn btn-primary' style='width:99%;' onmousedown='showPatient("+ curr_state['patient']['id'] +")'>View</button></th>"+
     '</tr>'
 
     $('#dev-table > tbody:last-child').append(new_row);    

@@ -13,6 +13,16 @@
     <script src="libs/fhir-client/fhir-client.js"></script>
 </head>
 <body>
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+    <!-- Modal content -->
+    <div class="modal-content">
+        <span class="close">&times;</span>
+        <p>Some text in the Modal..</p>
+    </div>
+
+</div>
 
 <div class="container" style="width: 95vw !important;">
         <div>
@@ -25,7 +35,7 @@
                             </span>
                     </div>
                 </div>
-
+<!--
                 <div id="patientBanner" class="navbar navbar-inverse navbar-static-top" role="navigation">
                 <p class="navbar-brand"><span class="glyphicon glyphicon-user"></span><span id="patientName"></span></p>
                 <p class="navbar-text">sex <span id="patientSex" class="title"></span></p>
@@ -37,19 +47,23 @@
                     <input type="text" class="form-control" id="dev-table-filter" data-action="filter" data-filters="#dev-table" placeholder="Filter Patients" />
                 </div>
 
-
+//-->
                 <table class="table table-hover" id="dev-table">
                     <thead>
                     <tr>
-                        <th>Patient Name</th>
-                        <th>Age</th>
-                        <th>Sex</th>
-                        <th># Blood Glucose < 70 since admit </th>
-                        <th># Blood Glucose 180-250 since admit</th>
-                        <th># Blood Glucose > 250 since admit</th>
-                        <th>A1C (value) in last 3 months</th>
-                        <th>Basal insulin ordered</th>
-                        <th>Action</th>
+                        <th rowspan="2">Patient Name</th>
+                        <th rowspan="2">Age</th>
+                        <th rowspan="2">Sex</th>
+                        <th rowspan="2">Admission Date</th>
+                        <th colspan="3" style="text-align: center">Blood Glucose Counts</th>
+                        <th rowspan="2">A1C (value) in last 3 months</th>
+                        <th rowspan="2">Basal insulin ordered</th>
+                        <th rowspan="2">Action</th>
+                    </tr>
+                    <tr>
+                        <th>< 70 since admit </th>
+                        <th> 180-250 since admit</th>
+                        <th>> 250 since admit</th>
                     </tr>
                     </thead>
                     <tbody>
@@ -64,6 +78,7 @@
 
 
 </body>
-<script src="app.js"></script>
-<!--<script src="libs/application.js"></script>-->
+<!--<script src="app.js"></script>
+<script src="libs/application.js"></script>-->
+<script src="libs/application.js"></script>
 </html>
