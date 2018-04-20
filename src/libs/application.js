@@ -160,11 +160,13 @@ function displayPatients(patients)
             hasA1C: false,
             a1c: 0,
             a1c_values: [],
-            glucose_values: []
+            glucose_values: [],
+            insulinOrdered: false
         }
 
         states[patients[i].id] = patientState
         getPatientA1C(patients[i].id, 'http://loinc.org|4548-4')
+        getInsulinOrder(patients[i].id, 'http://snomed.info/sct|263887005')
         getPatientGlcObs(patients[i].id, 'http://loinc.org|41653-7')
 
     }
@@ -184,7 +186,7 @@ function addPatientRow(id)
         "<th style='text-align: center;'><strong>"+curr_state.glucoseCounts.above250_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.above250 + "]</small></th>"+
 
         "<th style='text-align: center;'>" + (curr_state.hasA1C ? curr_state.a1c : 'N/A') + "</th>"+
-        '<th>n/a</th>'+
+        "<th style='text-align: center;'>" + (curr_state.insulinOrdered ? 'Yes' : 'No') + "</th>"+
         "<th><button class= 'btn btn-primary' style='width:99%;' id='btn-"+ curr_state['patient']['id'] +
         "' onmousedown='showPatient("+ curr_state['patient']['id'] +")'>View</button></th>"+
         '</tr>'
@@ -321,6 +323,32 @@ function getPatientA1C(patient_id, obs_code) {
             {
                 states[patient_id].a1c_values.push([Date.parse(obs[i].effectiveDateTime),obs[i].valueQuantity.value])
             }
+        }
+    })
+
+}
+
+function getInsulinOrder(patient_id, obs_code) {
+
+    SMART.api.fetchAll({
+        type: 'MedicationAdministration',
+        query: {
+
+            /*
+            {
+            $gte
+            $or: ['http://loinc.org|41653-7', 'http://loinc.org|8462-4',
+                'http://loinc.org|8480-6', 'http://loinc.org|2085-9',
+                'http://loinc.org|2089-1', 'http://loinc.org|55284-4']}*/
+            
+            subject: "Patient/"+patient_id
+        }
+    }).then(function (obs) {
+
+        if (obs.length > 0)
+        {
+            states[patient_id].insulinOrdered = true
+
         }
     })
 
