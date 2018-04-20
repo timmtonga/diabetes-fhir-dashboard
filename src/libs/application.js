@@ -92,7 +92,7 @@ function showPatient(id)
     if(button.innerHTML == "View")
     {
         button.innerHTML ="Hide";
-        document.getElementById("row-"+id).style.display = "block";
+        document.getElementById("row-"+id).style.display = "";
     }
     else
     {
@@ -156,7 +156,8 @@ function displayPatients(patients)
                 age: (filter.age(patients[i].birthDate))
             },
             glucoseCounts: {below70: 0,within70_250: 0,above250:0, below70_last72hrs: 0,within70_250_last72hrs: 0,above250_last72hrs:0},
-            hasA1C: false
+            hasA1C: false,
+            a1c: 0
         }
 
         states[patients[i].id] = patientState
@@ -182,11 +183,11 @@ function addPatientRow(id)
         "<th>"+curr_state.glucoseCounts.below70_last72hrs +"</th>"+
         "<th>"+curr_state.glucoseCounts.within70_250_last72hrs+"</th>"+
         "<th>"+curr_state.glucoseCounts.above250_last72hrs +"</th>"+*/
-        "<th><strong>"+curr_state.glucoseCounts.below70_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.below70 + "]</small></th>"+
-        "<th><strong>"+curr_state.glucoseCounts.within70_250_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.within70_250+ "]</small></th>"+
-        "<th><strong>"+curr_state.glucoseCounts.above250_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.above250 + "]</small></th>"+
+        "<th style='text-align: center;'><strong>"+curr_state.glucoseCounts.below70_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.below70 + "]</small></th>"+
+        "<th style='text-align: center;'><strong>"+curr_state.glucoseCounts.within70_250_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.within70_250+ "]</small></th>"+
+        "<th style='text-align: center;'><strong>"+curr_state.glucoseCounts.above250_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.above250 + "]</small></th>"+
 
-        "<th>" + (curr_state.hasA1C ? 'Yes' : 'No') + "</th>"+
+        "<th style='text-align: center;'>" + (curr_state.hasA1C ? curr_state.a1c : 'N/A') + "</th>"+
         '<th>n/a</th>'+
         "<th><button class= 'btn btn-primary' style='width:99%;' id='btn-"+ curr_state['patient']['id'] +
         "' onmousedown='showPatient("+ curr_state['patient']['id'] +")'>View</button></th>"+
@@ -194,9 +195,104 @@ function addPatientRow(id)
 
     $('#dev-table > tbody:last-child').append(new_row);
     chart_row = '' +
-        "<tr id='row-"+ curr_state['patient']['id'] +"' style='display: none;' colspan='10'><td>I am here</td></td></tr>"
+        "<tr id='row-"+ curr_state['patient']['id'] +"' style='display: none;'><th colspan=10>"+
+        "<div id='chart-"+ curr_state['patient']['id'] +"' style='min-width: 95vw; height: 15vw; margin-right:auto;margin-left: auto;'></div>"
+        "</th><th>&nbsp;</th></tr>"
     $('#dev-table > tbody:last-child').append(chart_row);
+    addChart(curr_state['patient']['id'])
 
+}
+
+//Function to create charts
+function addChart(patient_id) {
+    Highcharts.chart('chart-'+patient_id, {
+        chart: {
+            type: 'spline'
+        },
+        credits:false,
+        title: {
+            text: ''
+        },
+        xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: { // don't display the dummy year
+                month: '%e %b',
+                year: '%b'
+            },
+            title: {
+                text: 'Date'
+            }
+        },
+        yAxis: [{ // left y axis
+            title: {
+                text: 'Glucose mg/dL'
+            },
+            labels: {
+                align: 'left',
+                x: 3,
+                y: 16,
+                format: '{value:.,0f}'
+            },
+            showFirstLabel: false
+        }, { // right y axis
+            linkedTo: 0,
+            gridLineWidth: 0,
+            opposite: true,
+            title: {
+                text: 'HbA1c %'
+            },
+            labels: {
+                align: 'right',
+                x: -3,
+                y: 16,
+                format: '{value:.,0f}'
+            },
+            showFirstLabel: false
+        }],
+        tooltip: {
+            headerFormat: '<b>{series.name}</b><br>',
+            pointFormat: '{point.x:%e %b}: {point.y:.2f}'
+        },
+
+        plotOptions: {
+            spline: {
+                marker: {
+                    enabled: true
+                }
+            }
+        },
+
+        colors: ['#6CF', '#036', '#000'],
+
+        // Define the data points. All series have a dummy year
+        // of 1970/71 in order to be compared on the same x axis. Note
+        // that in JavaScript, months start at 0 for January, 1 for February etc.
+        series: [{
+            name: "Glucose",
+            data: [
+                [Date.UTC(1970, 10, 25), 0],
+                [Date.UTC(1970, 11,  6), 0.25],
+                [Date.UTC(1970, 11, 20), 1.41],
+                [Date.UTC(1970, 11, 25), 1.64]
+            ]
+        }, {
+            name: "HbA1c",
+            data: [
+                [Date.UTC(1970, 10,  9), 0],
+                [Date.UTC(1970, 10, 15), 0.23],
+                [Date.UTC(1970, 10, 20), 0.25],
+                [Date.UTC(1970, 10, 25), 0.23],
+                [Date.UTC(1970, 10, 30), 0.39],
+                [Date.UTC(1970, 11,  5), 0.41],
+                [Date.UTC(1970, 11, 10), 0.59],
+                [Date.UTC(1970, 11, 15), 0.73],
+                [Date.UTC(1970, 11, 20), 0.41],
+                [Date.UTC(1970, 11, 25), 1.07],
+                [Date.UTC(1970, 11, 30), 0.88],
+
+            ]
+        }]
+    });
 }
 
 //Function to query specific observations
@@ -242,6 +338,7 @@ function getPatientA1C(patient_id, obs_code) {
         if (obs.length > 0)
         {
             states[patient_id].hasA1C = true
+            states[patient_id].a1c = obs[0].valueQuantity.value
         }
     })
 
