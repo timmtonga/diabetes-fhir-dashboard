@@ -38,10 +38,10 @@ age: (date) => {
     let hours = (new Date().getTime() - new Date(date).getTime()) / 36e5
     if (dateAge > 1) hours = hours/(24 * dateAge)
 
-    if ( (yearAge > 0) && (monthAge > 0) && (dateAge > 0) ) return yearAge + " yrs " //+ monthAge + " months"
-    else if ( (yearAge > 0) && (monthAge > 0) && (dateAge == 0) ) return yearAge + " yrs" // + monthAge + " months"
-    else if ( (yearAge > 0) && (monthAge == 0) && (dateAge > 0) ) return yearAge + " yrs" //+ dateAge + " days"
-    else if ( (yearAge > 0) && (monthAge == 0) && (dateAge == 0) ) return yearAge + " yrs"
+    if ( (yearAge > 0) && (monthAge > 0) && (dateAge > 0) ) return yearAge  //+ monthAge + " months"
+    else if ( (yearAge > 0) && (monthAge > 0) && (dateAge == 0) ) return yearAge  // + monthAge + " months"
+    else if ( (yearAge > 0) && (monthAge == 0) && (dateAge > 0) ) return yearAge //+ dateAge + " days"
+    else if ( (yearAge > 0) && (monthAge == 0) && (dateAge == 0) ) return yearAge 
     else if ( (yearAge == 0) && (monthAge > 0) && (dateAge > 0) ) return monthAge + " mths " //+ dateAge + " days"
     else if ( (yearAge == 0) && (monthAge > 0) && (dateAge == 0) ) return monthAge + " mths"
     else if ( (yearAge == 0) && (monthAge == 0) && (dateAge > 1) ) return dateAge + " days"
@@ -108,15 +108,34 @@ function showPatient(id)
 }
 
 function parseGlucose( observations, id ){
+    let patient_max_date = 0
+    for(i = 0; i < observations.length; i++)
+    {
+        let curr_date = Date.parse(observations[i].effectiveDateTime);
+        if (curr_date > patient_max_date){
+            patient_max_date = curr_date
+        }
+    }
 
     for(i = 0; i < observations.length; i++)
     {
+        let curr_date = Date.parse(observations[i].effectiveDateTime);
+        let within72hrs = curr_date > (patient_max_date - 259200000);
         if (observations[i].valueQuantity.value < 70){
             states[id].glucoseCounts.below70 += 1
+            if (within72hrs){
+               states[id].glucoseCounts.below70_last72hrs += 1 
+            }
         }else if (observations[i].valueQuantity.value > 250){
             states[id].glucoseCounts.above250 += 1
+            if (within72hrs){
+               states[id].glucoseCounts.above250_last72hrs += 1 
+            }
         }else {
             states[id].glucoseCounts.within70_250 += 1
+            if (within72hrs){
+               states[id].glucoseCounts.within70_250_last72hrs += 1 
+            }
         }
     }
     addPatientRow(id)
@@ -136,7 +155,7 @@ function displayPatients(patients)
                 gender: patients[i].gender,
                 age: (filter.age(patients[i].birthDate))
             },
-            glucoseCounts: {below70: 0,within70_250: 0,above250:0},
+            glucoseCounts: {below70: 0,within70_250: 0,above250:0, below70_last72hrs: 0,within70_250_last72hrs: 0,above250_last72hrs:0},
             hasA1C: false
         }
 
@@ -156,9 +175,17 @@ function addPatientRow(id)
         '<th>'+curr_state.patient.age+'</th>'+
         "<th style='text-transform: capitalize'>"+curr_state.patient.gender+'</th>'+
         "<th style='text-transform: capitalize'>&nbsp;</th>"+
-        "<th>"+curr_state.glucoseCounts.below70 +"</th>"+
+        
+        /*"<th>"+curr_state.glucoseCounts.below70 +"</th>"+
         "<th>"+curr_state.glucoseCounts.within70_250+"</th>"+
         "<th>"+curr_state.glucoseCounts.above250 +"</th>"+
+        "<th>"+curr_state.glucoseCounts.below70_last72hrs +"</th>"+
+        "<th>"+curr_state.glucoseCounts.within70_250_last72hrs+"</th>"+
+        "<th>"+curr_state.glucoseCounts.above250_last72hrs +"</th>"+*/
+        "<th><strong>"+curr_state.glucoseCounts.below70_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.below70 + "]</small></th>"+
+        "<th><strong>"+curr_state.glucoseCounts.within70_250_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.within70_250+ "]</small></th>"+
+        "<th><strong>"+curr_state.glucoseCounts.above250_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.above250 + "]</small></th>"+
+
         "<th>" + (curr_state.hasA1C ? 'Yes' : 'No') + "</th>"+
         '<th>n/a</th>'+
         "<th><button class= 'btn btn-primary' style='width:99%;' id='btn-"+ curr_state['patient']['id'] +

@@ -64,3 +64,11 @@
     text-decoration: none;
     cursor: pointer;
 }
+
+strong { 
+    font-size: 18px;
+}
+
+small {
+    font-size: 8px;
+}
