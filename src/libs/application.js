@@ -137,6 +137,7 @@ function parseGlucose( observations, id ){
                states[id].glucoseCounts.within70_250_last72hrs += 1 
             }
         }
+        states[id].glucose_values.push([Date.parse(observations[i].effectiveDateTime),observations[i].valueQuantity.value])
     }
     addPatientRow(id)
 }
@@ -157,7 +158,9 @@ function displayPatients(patients)
             },
             glucoseCounts: {below70: 0,within70_250: 0,above250:0, below70_last72hrs: 0,within70_250_last72hrs: 0,above250_last72hrs:0},
             hasA1C: false,
-            a1c: 0
+            a1c: 0,
+            a1c_values: [],
+            glucose_values: []
         }
 
         states[patients[i].id] = patientState
@@ -176,13 +179,6 @@ function addPatientRow(id)
         '<th>'+curr_state.patient.age+'</th>'+
         "<th style='text-transform: capitalize'>"+curr_state.patient.gender+'</th>'+
         "<th style='text-transform: capitalize'>&nbsp;</th>"+
-        
-        /*"<th>"+curr_state.glucoseCounts.below70 +"</th>"+
-        "<th>"+curr_state.glucoseCounts.within70_250+"</th>"+
-        "<th>"+curr_state.glucoseCounts.above250 +"</th>"+
-        "<th>"+curr_state.glucoseCounts.below70_last72hrs +"</th>"+
-        "<th>"+curr_state.glucoseCounts.within70_250_last72hrs+"</th>"+
-        "<th>"+curr_state.glucoseCounts.above250_last72hrs +"</th>"+*/
         "<th style='text-align: center;'><strong>"+curr_state.glucoseCounts.below70_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.below70 + "]</small></th>"+
         "<th style='text-align: center;'><strong>"+curr_state.glucoseCounts.within70_250_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.within70_250+ "]</small></th>"+
         "<th style='text-align: center;'><strong>"+curr_state.glucoseCounts.above250_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.above250 + "]</small></th>"+
@@ -269,28 +265,10 @@ function addChart(patient_id) {
         // that in JavaScript, months start at 0 for January, 1 for February etc.
         series: [{
             name: "Glucose",
-            data: [
-                [Date.UTC(1970, 10, 25), 0],
-                [Date.UTC(1970, 11,  6), 0.25],
-                [Date.UTC(1970, 11, 20), 1.41],
-                [Date.UTC(1970, 11, 25), 1.64]
-            ]
+            data: states[patient_id].glucose_values
         }, {
             name: "HbA1c",
-            data: [
-                [Date.UTC(1970, 10,  9), 0],
-                [Date.UTC(1970, 10, 15), 0.23],
-                [Date.UTC(1970, 10, 20), 0.25],
-                [Date.UTC(1970, 10, 25), 0.23],
-                [Date.UTC(1970, 10, 30), 0.39],
-                [Date.UTC(1970, 11,  5), 0.41],
-                [Date.UTC(1970, 11, 10), 0.59],
-                [Date.UTC(1970, 11, 15), 0.73],
-                [Date.UTC(1970, 11, 20), 0.41],
-                [Date.UTC(1970, 11, 25), 1.07],
-                [Date.UTC(1970, 11, 30), 0.88],
-
-            ]
+            data: states[patient_id].a1c_values
         }]
     });
 }
@@ -339,6 +317,10 @@ function getPatientA1C(patient_id, obs_code) {
         {
             states[patient_id].hasA1C = true
             states[patient_id].a1c = obs[0].valueQuantity.value
+            for(i=0; i < obs.length; i++)
+            {
+                states[patient_id].a1c_values.push([Date.parse(obs[i].effectiveDateTime),obs[i].valueQuantity.value])
+            }
         }
     })
 
