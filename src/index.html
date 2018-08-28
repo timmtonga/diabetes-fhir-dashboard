@@ -2,8 +2,6 @@
 <html lang="en">
 <head>
     <title>Diabetes Dashboard</title>
-
-
     <link rel="stylesheet" href="libs/application.css">
     <script src="libs/jquery-2.1.4/jquery.min.js"></script>
     <link href="//netdna.bootstrapcdn.com/bootstrap/3.1.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
@@ -12,6 +10,15 @@
     <script src="libs/xdate.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script src="libs/fhir-client/fhir-client.js"></script>
+
+    <style>
+        thead th{
+            color: #ffffff;
+            border-color: #3276b1 !important;
+            background-color: #3276b1 !important;
+
+        }
+    </style>
 </head>
 <body>
 <div class="container" style="width: 99vw !important;">
@@ -22,20 +29,20 @@
                 </div>
                 <table class="table table-hover" id="dev-table">
                     <thead>
-                    <tr>
+                    <tr >
                         <th rowspan="2">Patient Name</th>
                         <th rowspan="2">Age (yrs)</th>
                         <th rowspan="2">Sex</th>
-                        <th rowspan="2">Admission Date</th>
+                        <th rowspan="2" style="text-align: center;">Admission Date</th>
                         <th colspan="3" style="text-align: center">Blood Glucose Counts <p><strong> last 72 hours </strong><small>[since admit]</small></th>
-                        <th rowspan="2">A1C (value) in last 3 months</th>
-                        <th rowspan="2">Basal insulin ordered</th>
-                        <th rowspan="2">Action</th>
+                        <th rowspan="2" style="text-align: center;">A1C (value) in last 3 months</th>
+                        <th rowspan="2" style="text-align: center;">Basal insulin ordered</th>
+                        <th rowspan="2" style="text-align: center;">Action</th>
                     </tr>
-                    <tr>
-                        <th style="text-align: center">< 70 </th>
-                        <th style="text-align: center"> 70-250 </th>
-                        <th style="text-align: center">> 250 </th>
+                    <tr >
+                        <th style="text-align: center;">< 70 </th>
+                        <th style="text-align: center;"> 70-250 </th>
+                        <th style="text-align: center;">> 250 </th>
                     </tr>
                     </thead>
                     <tbody>
@@ -49,6 +56,7 @@
 
 
 </body>
+
 
 <script src="libs/application.js"></script>
 </html>

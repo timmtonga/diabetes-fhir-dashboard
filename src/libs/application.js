@@ -50,29 +50,6 @@ const filter = {
         else if ( (yearAge == 0) && (monthAge == 0) && (dateAge > 1) ) return dateAge + " days"
         else if ( (yearAge == 0) && (monthAge == 0) && (dateAge > 0) ) return hours.toFixed(2) + " hrs"
         else return "Could not calculate age"
-    },
-    nameGivenFamily: (p) => {
-        let isArrayName = p && p.name && p.name[0]
-        let personName
-
-        if (isArrayName) {
-            personName = p && p.name && p.name[0]
-            if (!personName) return null
-        } else {
-            personName = p && p.name
-            if (!personName) return null
-        }
-
-        let user
-        if (Object.prototype.toString.call(personName.family) === '[object Array]') {
-            user = personName.given.join(" ") + " " + personName.family.join(" ")
-        } else {
-            user = personName.given.join(" ") + " " + personName.family
-        }
-        if (personName.suffix) {
-            user = user + ", " + personName.suffix.join(", ")
-        }
-        return user
     }
 }
 
@@ -291,7 +268,7 @@ function displayPatients(patients) {
         states[patients[i].id] = patientState
         getObs(patients[i].id, 'http://loinc.org|4548-4','patientA1C')
         getObs(patients[i].id, 'http://loinc.org|41653-7','patientGlcObs')
-        getInsulinOrder(patients[i].id, 'http://snomed.info/sct|263887005')
+        getInsulinOrder(patients[i].id)
         addPatientRow(patients[i].id)
     }
 }
@@ -364,8 +341,8 @@ function patientA1C(patient_id, observations) {
 
 }
 
-//Function to get medication order
-function getInsulinOrder(patient_id, obs_code) {
+//Function to get medication order need to add filter fo insulin
+function getInsulinOrder(patient_id) {
     SMART.api.fetchAll({
         type: 'MedicationAdministration',
         query: {
