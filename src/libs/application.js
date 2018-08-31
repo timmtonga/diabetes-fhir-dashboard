@@ -88,11 +88,11 @@ function addPatientRow(id) {
     seventyTwoHrsCell.innerHTML = "<strong>"+curr_state.glucoseCounts.below70_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.below70 + "]</small>"
     row.appendChild(seventyTwoHrsCell)
 
-    let seventyTo250Cell = document.createElement("th")
+    let oneEightyTo250Cell = document.createElement("th")
 
-    seventyTo250Cell.style.textAlign = "center"
-    seventyTo250Cell.innerHTML = "<strong>"+curr_state.glucoseCounts.within70_250_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.within70_250+ "]</small>"
-    row.appendChild(seventyTo250Cell)
+    oneEightyTo250Cell.style.textAlign = "center"
+    oneEightyTo250Cell.innerHTML = "<strong>"+curr_state.glucoseCounts.within180_250_last72hrs + "</strong> <small>[" + curr_state.glucoseCounts.within180_250+ "]</small>"
+    row.appendChild(oneEightyTo250Cell)
 
     let above250Cell = document.createElement("th")
 
@@ -257,7 +257,8 @@ function displayPatients(patients) {
                 gender: patients[i].gender,
                 age: (filter.age(patients[i].birthDate))
             },
-            glucoseCounts: {below70: 0,within70_250: 0,above250:0, below70_last72hrs: 0,within70_250_last72hrs: 0,above250_last72hrs:0},
+            glucoseCounts: {below70: 0,within70_180: 0,within180_250: 0,above250:0, below70_last72hrs: 0,
+                within70_180_last72hrs: 0,within180_250_last72hrs: 0,above250_last72hrs:0},
             hasA1C: false,
             a1c: 0,
             a1c_values: [],
@@ -291,31 +292,44 @@ function patientGlcObs(patient_id, observations) {
         //Group the glucose observations depending on whether they happened within the last 72 hrs or not
         let curr_date = Date.parse(observations[i].effectiveDateTime);
         let within72hrs = curr_date > (patient_max_date - 259200000);
+
         if (observations[i].valueQuantity.value < 70){
             states[patient_id].glucoseCounts.below70 += 1
             if (within72hrs){
                 states[patient_id].glucoseCounts.below70_last72hrs += 1
-                $("#ptRow" + patient_id)[0].children[cellIndex['less than 70']].innerHTML = "<strong>"+
-                    states[patient_id].glucoseCounts.below70_last72hrs +
-                    "</strong> <small>[" + states[patient_id].glucoseCounts.below70 +"]</small>"
             }
+            //update the display with new values
+            $("#ptRow" + patient_id)[0].children[cellIndex['less than 70']].innerHTML = "<strong>"+
+                states[patient_id].glucoseCounts.below70_last72hrs +
+                "</strong> <small>[" + states[patient_id].glucoseCounts.below70 +"]</small>"
+
         }else if (observations[i].valueQuantity.value > 250){
             states[patient_id].glucoseCounts.above250 += 1
             if (within72hrs){
                 states[patient_id].glucoseCounts.above250_last72hrs += 1
-                $("#ptRow" + patient_id)[0].children[cellIndex['above 250']].innerHTML = "<strong>"+
-                    states[patient_id].glucoseCounts.above250_last72hrs +
-                    "</strong> <small>[" + states[patient_id].glucoseCounts.above250 +"]</small>"
             }
-        }else {
-            states[patient_id].glucoseCounts.within70_250 += 1
+            //update the display with new values
+            $("#ptRow" + patient_id)[0].children[cellIndex['above 250']].innerHTML = "<strong>"+
+                states[patient_id].glucoseCounts.above250_last72hrs +
+                "</strong> <small>[" + states[patient_id].glucoseCounts.above250 +"]</small>"
+
+        }else if((observations[i].valueQuantity.value >= 180) && (observations[i].valueQuantity.value <= 250)) {
+            states[patient_id].glucoseCounts.within180_250 += 1
             if (within72hrs){
-                states[patient_id].glucoseCounts.within70_250_last72hrs += 1
-                $("#ptRow" + patient_id)[0].children[cellIndex['less than 250']].innerHTML = "<strong>"+
-                    states[patient_id].glucoseCounts.within70_250_last72hrs +
-                    "</strong> <small>[" + states[patient_id].glucoseCounts.within70_250 +"]</small>"
+                states[patient_id].glucoseCounts.within180_250_last72hrs += 1
+            }
+            //update the display with new values
+            $("#ptRow" + patient_id)[0].children[cellIndex['less than 250']].innerHTML = "<strong>"+
+                states[patient_id].glucoseCounts.within180_250_last72hrs +
+                "</strong> <small>[" + states[patient_id].glucoseCounts.within180_250 +"]</small>"
+
+        }else {
+            states[patient_id].glucoseCounts.within70_180 += 1
+            if (within72hrs){
+                states[patient_id].glucoseCounts.within70_180_last72hrs += 1
             }
         }
+        //populate global variable for generating charts
         states[patient_id].glucose_values.push([Date.parse(observations[i].effectiveDateTime),observations[i].valueQuantity.value])
     }
 
